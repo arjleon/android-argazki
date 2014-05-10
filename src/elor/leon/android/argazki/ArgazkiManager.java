@@ -68,8 +68,13 @@ class ArgazkiManager implements ArgazkiListener {
 		if (cachedBitmap == null) {
 			return false;
 		} else {
-			boolean lowerDimension =
-					Math.max(cachedBitmap.getWidth(), cachedBitmap.getHeight()) < request.getMaxDimension();
+			boolean lowerDimension = true;
+			
+			if (request.shouldScale()) {
+				lowerDimension = Math.max(cachedBitmap.getWidth(), cachedBitmap.getHeight()) 
+						< request.getMaxDimension();
+			}
+
 			if (lowerDimension) {
 				mCache.remove(request.getUrl());
 				return false;
