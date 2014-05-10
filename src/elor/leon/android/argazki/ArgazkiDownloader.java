@@ -6,7 +6,6 @@ import java.net.URL;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.util.Log;
 
 class ArgazkiDownloader extends AsyncTask<Void, Void, Bitmap> {
 
@@ -33,15 +32,12 @@ class ArgazkiDownloader extends AsyncTask<Void, Void, Bitmap> {
 			connection = (HttpURLConnection) url.openConnection();
 			connection.connect();
 			
-			Log.i("aaa", "response from url=" + connection.getResponseMessage());
-			
 			if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
 				bitmap = BitmapFactory.decodeStream(connection.getInputStream());
 			} else {
 				return null;
 			}
 		} catch (Exception e) {
-			Log.e("aaa", "error downloading/resizing bitmap", e);
 			return null;
 		} finally {
 			if (connection != null) {

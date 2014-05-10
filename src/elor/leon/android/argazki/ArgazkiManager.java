@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.util.LruCache;
 
 class ArgazkiManager implements ArgazkiListener {
@@ -46,8 +45,6 @@ class ArgazkiManager implements ArgazkiListener {
 		
 		boolean cached = setBitmapIfCached(request);
 		
-		Log.i("aaa", "cache?" + cached + "(" + request.getUrl() + ")");
-		
 		if (cached) {
 			mRequests.remove(request);
 			mRunning = false;
@@ -71,9 +68,9 @@ class ArgazkiManager implements ArgazkiListener {
 		if (cachedBitmap == null) {
 			return false;
 		} else {
-			boolean differentMaxDimension =
-					Math.max(cachedBitmap.getWidth(), cachedBitmap.getHeight()) != request.getMaxDimension();
-			if (differentMaxDimension) {
+			boolean lowerDimension =
+					Math.max(cachedBitmap.getWidth(), cachedBitmap.getHeight()) < request.getMaxDimension();
+			if (lowerDimension) {
 				mCache.remove(request.getUrl());
 				return false;
 			} else {
@@ -86,10 +83,7 @@ class ArgazkiManager implements ArgazkiListener {
 	@Override
 	public void onDownload(boolean ok, ArgazkiRequest request, Bitmap bitmap) {
 		if (ok) {
-			Log.i("aaa", "size=" + bitmap.getByteCount() / 1024 + "kb (" + request.getUrl() + ")");
 			mCache.put(request.getUrl(), bitmap);
-			boolean cached = mCache.get(request.getUrl()) != null;
-			Log.i("aaa", "cached just now (" + cached + ")");
 			mRequests.remove(0);
 			request.getImageView().setImageBitmap(bitmap);
 		}
