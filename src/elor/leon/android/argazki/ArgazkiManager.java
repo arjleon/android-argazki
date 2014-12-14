@@ -90,7 +90,14 @@ class ArgazkiManager implements ArgazkiListener {
 		if (ok) {
 			mCache.put(request.getUrl(), bitmap);
 			mRequests.remove(0);
-			request.getImageView().setImageBitmap(bitmap);
+			
+			if (request.hasImageView()) {
+				request.getImageView().setImageBitmap(bitmap);
+			}
+			
+			if (request.hasListener()) {
+				request.getListener().onDownload(ok, request, bitmap);
+			}
 		}
 		
 		mRunning = false;
