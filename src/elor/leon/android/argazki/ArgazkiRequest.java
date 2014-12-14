@@ -10,6 +10,7 @@ public class ArgazkiRequest {
 	private boolean mScale = false;
 	private int mMaxDimension;
 	private ImageView mImageView;
+	private ArgazkiListener mCustomListener;
 	
 	ArgazkiRequest(Context context) {
 		mContext = context.getApplicationContext();
@@ -31,8 +32,20 @@ public class ArgazkiRequest {
 		return mMaxDimension;
 	}
 	
+	boolean hasImageView() {
+		return mImageView != null;
+	}
+	
 	ImageView getImageView() {
 		return mImageView;
+	}
+	
+	boolean hasListener() {
+		return mCustomListener != null;
+	}
+	
+	ArgazkiListener getListener() {
+		return mCustomListener;
 	}
 	
 	public ArgazkiRequest from(final String url) {
@@ -46,8 +59,24 @@ public class ArgazkiRequest {
 		return this;
 	}
 	
-	public void to(final ImageView imageView) {
+	/**
+	 * With this method the fetched image will be set to the passed ImageView object automatically.
+	 */
+	public ArgazkiRequest to(final ImageView imageView) {
 		mImageView = imageView;
+		return this;
+	}
+	
+	/**
+	 * This method is called when the implementing object requires direct handling of the Bitmap
+	 * once it is fetched.
+	 */
+	public ArgazkiRequest callback(final ArgazkiListener listener) {
+		mCustomListener = listener;
+		return this;
+	}
+	
+	public void go() {
 		ArgazkiManager
 				.getInstance()
 				.addRequest(this);
