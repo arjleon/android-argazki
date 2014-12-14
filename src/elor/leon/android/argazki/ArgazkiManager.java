@@ -60,7 +60,7 @@ class ArgazkiManager implements ArgazkiListener {
 		 * retrieve cached bitmap
 		 * returns false if non existent
 		 * returns false if existent but different size (cached bitmap is removed)
-		 * returns true otherwise after setting bitmap into imageview (cached and same max dimension)
+		 * returns true otherwise after providing bitmap (cached and same max dimension)
 		 */
 		
 		Bitmap cachedBitmap = mCache.get(request.getUrl());
@@ -79,7 +79,7 @@ class ArgazkiManager implements ArgazkiListener {
 				mCache.remove(request.getUrl());
 				return false;
 			} else {
-				request.getImageView().setImageBitmap(cachedBitmap);
+				provideBitmap(true, request, cachedBitmap);
 				return true;
 			}
 		}
@@ -91,16 +91,24 @@ class ArgazkiManager implements ArgazkiListener {
 			mCache.put(request.getUrl(), bitmap);
 			mRequests.remove(0);
 			
-			if (request.hasImageView()) {
-				request.getImageView().setImageBitmap(bitmap);
-			}
-			
-			if (request.hasListener()) {
-				request.getListener().onDownload(ok, request, bitmap);
-			}
+			provideBitmap(ok, request, bitmap);
 		}
 		
 		mRunning = false;
 		init();
+	}
+	
+	private void provideBitmap(final boolean ok, final ArgazkiRequest request, final Bitmap bitmap) {
+		if (bitmap == null) {
+			return;
+		}
+		
+		if (request.hasImageView()) {
+			request.getImageView().setImageBitmap(bitmap);
+		}
+		
+		if (request.hasListener()) {
+			request.getListener().onDownload(ok, request, bitmap);
+		}
 	}
 }
